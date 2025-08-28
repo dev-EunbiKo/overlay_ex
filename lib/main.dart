@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:overlay_ex/pages/dropdown_page.dart';
 import 'package:overlay_ex/pages/position_based_overlay.dart';
 import 'package:overlay_ex/pages/simple_overlay.dart';
 
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     SimpleOverlay(),
     PositionBasedOverlay(),
-    Container(color: Colors.amber),
+    DropdownPage(),
   ];
   late int selectedIndex = 0;
 
