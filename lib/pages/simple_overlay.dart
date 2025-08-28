@@ -12,6 +12,21 @@ class SimpleOverlay extends StatefulWidget {
 class _SimpleOverlayState extends State<SimpleOverlay> {
   OverlayEntry? _overlayEntry;
 
+  @override
+  void dispose() {
+    super.dispose();
+    // dispose에서 반드시 오버레이 제거
+    _hideOverlay();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 페이지 이동 시에도 오버레이 제거
+    _hideOverlay();
+  }
+
+  /// 기본 오버레이
   void _showOverlay() {
     if (_overlayEntry == null) {
       _overlayEntry = OverlayEntry(
@@ -30,7 +45,64 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
             ),
       );
       Overlay.of(context).insert(_overlayEntry!);
-    } else {}
+    }
+  }
+
+  /// 반응형 오버레이
+  void _showResponsiveOverlay() {
+    final overlayEntry = _createResponsiveOverlay();
+    Overlay.of(context).insert(overlayEntry);
+
+    Timer(Duration(seconds: 5), () {
+      overlayEntry.remove();
+    });
+  }
+
+  /// 반응형 오버레이 생성
+  OverlayEntry _createResponsiveOverlay() {
+    return OverlayEntry(
+      builder: (context) {
+        final screenSize = MediaQuery.of(context).size;
+        final isTablet = screenSize.width > 600;
+
+        return Positioned.fill(
+          child: Material(
+            color: Colors.grey.shade100.withAlpha(100),
+            child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade900,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                width:
+                    isTablet ? screenSize.width * 0.8 : screenSize.width - 40,
+                height: screenSize.height * 0.2,
+                padding: EdgeInsets.all(isTablet ? 24 : 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Responsive Overlay',
+                      style: TextStyle(
+                        color: Colors.grey.shade900,
+                        fontSize: isTablet ? 20 : 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: isTablet ? 16 : 12),
+                    Text(
+                      'The Overlay Size will be changed according to Screen Size.',
+                      style: TextStyle(color: Colors.grey.shade900),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _hideOverlay() {
@@ -59,20 +131,6 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    // dispose에서 반드시 오버레이 제거
-    _hideOverlay();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // 페이지 이동 시에도 오버레이 제거
-    _hideOverlay();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -90,6 +148,10 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
             ElevatedButton(
               onPressed: _showAutoRemoveOverlay,
               child: Text('Auto Remove Overlay'),
+            ),
+            ElevatedButton(
+              onPressed: _showResponsiveOverlay,
+              child: Text('Responsive Overlay'),
             ),
           ],
         ),
