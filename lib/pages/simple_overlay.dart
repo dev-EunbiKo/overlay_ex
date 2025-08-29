@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:overlay_ex/utils/toast_manager.dart';
 
 class SimpleOverlay extends StatefulWidget {
   const SimpleOverlay({super.key});
@@ -11,6 +12,8 @@ class SimpleOverlay extends StatefulWidget {
 
 class _SimpleOverlayState extends State<SimpleOverlay> {
   OverlayEntry? _overlayEntry;
+
+  final OverlayPortalController _portalController = OverlayPortalController();
 
   @override
   void dispose() {
@@ -130,6 +133,31 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
     });
   }
 
+  Widget _portalBuilder() {
+    return Positioned(
+      top: 100,
+      left: 50,
+      child: Material(
+        elevation: 4,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Overlay by OverlayPortal'),
+              SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () => _portalController.hide(),
+                child: Text('close'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,6 +180,60 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
             ElevatedButton(
               onPressed: _showResponsiveOverlay,
               child: Text('Responsive Overlay'),
+            ),
+
+            SizedBox(height: 20),
+            OverlayPortal(
+              controller: _portalController,
+              overlayChildBuilder: (context) {
+                return _portalBuilder();
+              },
+              child: ElevatedButton(
+                onPressed: _portalController.show,
+                child: Text('Overlay Portal'),
+              ),
+            ),
+
+            SizedBox(height: 20),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed:
+                      () => ToastManager.showToast(
+                        context: context,
+                        message: 'Toast Message',
+                        type: ToastType.success,
+                      ),
+                  child: Text('Success'),
+                ),
+                // ElevatedButton(
+                //   onPressed:
+                //       () => ToastManager.showToast(
+                //         context: context,
+                //         message: 'Toast Message',
+                //         type: ToastType.info,
+                //       ),
+                //   child: Text('Info'),
+                // ),
+                // ElevatedButton(
+                //   onPressed:
+                //       () => ToastManager.showToast(
+                //         context: context,
+                //         message: 'Toast Message',
+                //         type: ToastType.error,
+                //       ),
+                //   child: Text('Error'),
+                // ),
+                // ElevatedButton(
+                //   onPressed:
+                //       () => ToastManager.showToast(
+                //         context: context,
+                //         message: 'Toast Message',
+                //         type: ToastType.warning,
+                //       ),
+                //   child: Text('Warning'),
+                // ),
+              ],
             ),
           ],
         ),

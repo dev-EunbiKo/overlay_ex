@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:overlay_ex/pages/dropdown_page.dart';
+import 'package:overlay_ex/pages/animation_overlay.dart';
+import 'package:overlay_ex/pages/user_input_page.dart';
 import 'package:overlay_ex/pages/position_based_overlay.dart';
 import 'package:overlay_ex/pages/simple_overlay.dart';
 
@@ -34,7 +35,8 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     SimpleOverlay(),
     PositionBasedOverlay(),
-    DropdownPage(),
+    UserInputPage(),
+    AnimationOverlay(),
   ];
   late int selectedIndex = 0;
 
@@ -94,12 +96,16 @@ class _HomePageState extends State<HomePage> {
                   icon: Icon(Icons.looks_one_rounded),
                 ),
                 BottomNavigationBarItem(
-                  label: 'Simple',
+                  label: 'Position Based',
                   icon: Icon(Icons.looks_two_rounded),
                 ),
                 BottomNavigationBarItem(
-                  label: 'Simple',
+                  label: 'User Input',
                   icon: Icon(Icons.looks_3_rounded),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Animation',
+                  icon: Icon(Icons.looks_4_rounded),
                 ),
               ],
             ),
