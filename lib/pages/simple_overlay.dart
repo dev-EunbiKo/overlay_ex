@@ -11,7 +11,7 @@ class SimpleOverlay extends StatefulWidget {
 }
 
 class _SimpleOverlayState extends State<SimpleOverlay> {
-  OverlayEntry? _overlayEntry;
+  OverlayEntry? _simpleOverlayEntry;
 
   final OverlayPortalController _portalController = OverlayPortalController();
 
@@ -29,10 +29,10 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
     _hideOverlay();
   }
 
-  /// 기본 오버레이
+  /// 기본 오버레이 show
   void _showOverlay() {
-    if (_overlayEntry == null) {
-      _overlayEntry = OverlayEntry(
+    if (_simpleOverlayEntry == null) {
+      _simpleOverlayEntry = OverlayEntry(
         builder:
             (context) => Positioned(
               top: 100,
@@ -47,8 +47,14 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
               ),
             ),
       );
-      Overlay.of(context).insert(_overlayEntry!);
+      Overlay.of(context).insert(_simpleOverlayEntry!);
     }
+  }
+
+  /// 기본 오버레이 제거
+  void _hideOverlay() {
+    _simpleOverlayEntry?.remove();
+    _simpleOverlayEntry = null;
   }
 
   /// 반응형 오버레이
@@ -108,11 +114,6 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
     );
   }
 
-  void _hideOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-  }
-
   /// 자동 제거 오버레이
   void _showAutoRemoveOverlay() {
     final overlayEntry = OverlayEntry(
@@ -133,6 +134,7 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
     });
   }
 
+  /// Overlay Portal을 이용한 오버레이 생성
   Widget _portalBuilder() {
     return Positioned(
       top: 100,
@@ -165,24 +167,38 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: _showOverlay,
-              child: Text('show Overlay'),
+            Row(
+              children: [
+                // 기본 show
+                ElevatedButton(
+                  onPressed: _showOverlay,
+                  child: Text('show Overlay'),
+                ),
+
+                // 기본 hide
+                ElevatedButton(
+                  onPressed: _hideOverlay,
+                  child: Text('hide Overlay'),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: _hideOverlay,
-              child: Text('hide Overlay'),
-            ),
+
+            SizedBox(height: 20),
+            // 자동 제거
             ElevatedButton(
               onPressed: _showAutoRemoveOverlay,
               child: Text('Auto Remove Overlay'),
             ),
+
+            SizedBox(height: 20),
+            // 반응형
             ElevatedButton(
               onPressed: _showResponsiveOverlay,
               child: Text('Responsive Overlay'),
             ),
 
             SizedBox(height: 20),
+            // Overlay Portal
             OverlayPortal(
               controller: _portalController,
               overlayChildBuilder: (context) {
@@ -195,45 +211,15 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
             ),
 
             SizedBox(height: 20),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed:
-                      () => ToastManager.showToast(
-                        context: context,
-                        message: 'Toast Message',
-                        type: ToastType.success,
-                      ),
-                  child: Text('Success'),
-                ),
-                // ElevatedButton(
-                //   onPressed:
-                //       () => ToastManager.showToast(
-                //         context: context,
-                //         message: 'Toast Message',
-                //         type: ToastType.info,
-                //       ),
-                //   child: Text('Info'),
-                // ),
-                // ElevatedButton(
-                //   onPressed:
-                //       () => ToastManager.showToast(
-                //         context: context,
-                //         message: 'Toast Message',
-                //         type: ToastType.error,
-                //       ),
-                //   child: Text('Error'),
-                // ),
-                // ElevatedButton(
-                //   onPressed:
-                //       () => ToastManager.showToast(
-                //         context: context,
-                //         message: 'Toast Message',
-                //         type: ToastType.warning,
-                //       ),
-                //   child: Text('Warning'),
-                // ),
-              ],
+            // Toast Message
+            ElevatedButton(
+              onPressed:
+                  () => ToastManager.showToast(
+                    context: context,
+                    message: 'Toast Message',
+                    type: ToastType.success,
+                  ),
+              child: Text('Success'),
             ),
           ],
         ),

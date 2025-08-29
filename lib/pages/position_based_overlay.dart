@@ -10,28 +10,32 @@ class PositionBasedOverlay extends StatefulWidget {
 class _PositionBasedOverlayState extends State<PositionBasedOverlay> {
   final GlobalKey _buttonKey = GlobalKey();
   final LayerLink _layerLink = LayerLink();
-  OverlayEntry? _overlayEntry;
+  OverlayEntry? _positionOverlayEntry;
+  OverlayEntry? _followOverlayEntry;
 
   @override
   void dispose() {
-    super.dispose();
     _hideOverlay();
+    super.dispose();
   }
 
+  /// 전체 오버레이 제거
   void _hideOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
+    _positionOverlayEntry?.remove();
+    _positionOverlayEntry = null;
+    _followOverlayEntry?.remove();
+    _followOverlayEntry = null;
   }
 
-  /// 위치 기반 동적 오버레이
+  /// 위치 기반 동적 오버레이 show
   void _showContextMenu() {
     final RenderBox renderBox =
         _buttonKey.currentContext!.findRenderObject() as RenderBox;
     final position = renderBox.localToGlobal(Offset.zero);
     final size = renderBox.size;
 
-    if (_overlayEntry == null) {
-      _overlayEntry = OverlayEntry(
+    if (_positionOverlayEntry == null) {
+      _positionOverlayEntry = OverlayEntry(
         builder:
             (context) => Positioned(
               left: position.dx,
@@ -68,14 +72,14 @@ class _PositionBasedOverlayState extends State<PositionBasedOverlay> {
             ),
       );
 
-      Overlay.of(context).insert(_overlayEntry!);
+      Overlay.of(context).insert(_positionOverlayEntry!);
     }
   }
 
   /// CompositedTransformFollower/Target을 이용한 고급 위치 추적
   void _showFollowerOverlay() {
-    if (_overlayEntry == null) {
-      _overlayEntry = OverlayEntry(
+    if (_followOverlayEntry == null) {
+      _followOverlayEntry = OverlayEntry(
         builder:
             (context) => CompositedTransformFollower(
               link: _layerLink,
@@ -113,7 +117,7 @@ class _PositionBasedOverlayState extends State<PositionBasedOverlay> {
             ),
       );
 
-      Overlay.of(context).insert(_overlayEntry!);
+      Overlay.of(context).insert(_followOverlayEntry!);
     }
   }
 

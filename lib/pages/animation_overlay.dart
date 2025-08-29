@@ -38,6 +38,7 @@ class _AnimationOverlayState extends State<AnimationOverlay>
     _animationController.dispose();
   }
 
+  /// 애니메이션이 추가된 오버레이 show
   void _showAnimatedOverlay() {
     _overlayEntry = OverlayEntry(
       builder:
@@ -104,6 +105,7 @@ class _AnimationOverlayState extends State<AnimationOverlay>
     _animationController.forward();
   }
 
+  /// 애니메이션이 추가된 오버레이 hide
   void _hideAnimatedOverlay() async {
     await _animationController.reverse();
     _overlayEntry?.remove();

@@ -9,6 +9,7 @@ class UserInputPage extends StatefulWidget {
 }
 
 class _UserInputPageState extends State<UserInputPage> {
+  // Custom Dropdown
   String? selectedValue;
   final List<String> items = [
     'Flutter',
@@ -18,83 +19,10 @@ class _UserInputPageState extends State<UserInputPage> {
     'Vue.js',
   ];
 
+  // FocusScope를 이용한 TextField 오버레이
   OverlayEntry? _textFieldOverlayEntry;
 
-  OverlayEntry? _overlayEntry;
-  String _searchText = '';
-
-  @override
-  void dispose() {
-    super.dispose();
-    _hideTextField();
-    _hideOverlay();
-  }
-
-  /// markNeedsBuild를 이용하여 오버레이만 업데이트
-  void _updateSearch(String value) {
-    _searchText = value;
-    _overlayEntry?.markNeedsBuild();
-  }
-
-  OverlayEntry _createSearchOverlay() {
-    return OverlayEntry(
-      builder:
-          (context) => Positioned(
-            top: 100,
-            left: 20,
-            right: 20,
-            child: Material(
-              elevation: 4,
-              borderRadius: BorderRadius.circular(8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    onChanged: _updateSearch,
-                    decoration: InputDecoration(
-                      hintText: 'Input Search Text',
-                      prefixIcon: Icon(Icons.search),
-                    ),
-                  ),
-                  if (_searchText.isNotEmpty)
-                    SizedBox(
-                      height: 200,
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          final item = _getFilteredResults()[index];
-                          return ListTile(
-                            title: Text(item),
-                            onTap: () => _hideOverlay(),
-                          );
-                        },
-                        itemCount: _getFilteredResults().length,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-    );
-  }
-
-  List<String> _getFilteredResults() {
-    final allItems = ['Flutter', 'Dart', 'Widget', 'OverlayEntry'];
-    return allItems
-        .where((item) => item.toLowerCase().contains(_searchText.toLowerCase()))
-        .toList();
-  }
-
-  void _showOverlay() {
-    _overlayEntry = _createSearchOverlay();
-    Overlay.of(context).insert(_overlayEntry!);
-  }
-
-  void _hideOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-  }
-
-  // FocusScope를 이용한 TextField 오버레이
+  /// FocusScope를 이용한 TextField 오버레이 show
   void _showTextField() {
     if (_textFieldOverlayEntry == null) {
       _textFieldOverlayEntry = _createFocusableOverlay();
@@ -102,13 +30,13 @@ class _UserInputPageState extends State<UserInputPage> {
     }
   }
 
-  // FocusScope를 이용한 TextField 오버레이 제거
+  /// FocusScope를 이용한 TextField 오버레이 제거
   void _hideTextField() {
     _textFieldOverlayEntry?.remove();
     _textFieldOverlayEntry = null;
   }
 
-  // FocusScope를 이용한 TextField 오버레이 생성
+  /// FocusScope를 이용한 TextField 오버레이 생성
   OverlayEntry _createFocusableOverlay() {
     return OverlayEntry(
       builder:
@@ -152,6 +80,85 @@ class _UserInputPageState extends State<UserInputPage> {
     );
   }
 
+  // markNeedsBuild를 이용하여 입력받은 텍스트에 해당하는 단어를 리스트로 보여주는 Search Overlay
+  OverlayEntry? _searchOverlayEntry;
+  String _searchText = '';
+
+  /// 입력 받은 문자에 해당하는 단어 리스트 return
+  List<String> _getFilteredResults() {
+    final allItems = ['Flutter', 'Dart', 'Widget', 'OverlayEntry'];
+    return allItems
+        .where((item) => item.toLowerCase().contains(_searchText.toLowerCase()))
+        .toList();
+  }
+
+  /// markNeedsBuild를 이용하여 오버레이만 업데이트
+  void _updateSearch(String value) {
+    _searchText = value;
+    _searchOverlayEntry?.markNeedsBuild();
+  }
+
+  /// Search Overlay 생성
+  OverlayEntry _createSearchOverlay() {
+    return OverlayEntry(
+      builder:
+          (context) => Positioned(
+            top: 100,
+            left: 20,
+            right: 20,
+            child: Material(
+              elevation: 4,
+              borderRadius: BorderRadius.circular(8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    onChanged: _updateSearch,
+                    decoration: InputDecoration(
+                      hintText: 'Input Search Text',
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                  ),
+                  if (_searchText.isNotEmpty)
+                    SizedBox(
+                      height: 200,
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          final item = _getFilteredResults()[index];
+                          return ListTile(
+                            title: Text(item),
+                            onTap: () => _hideSearchOverlay(),
+                          );
+                        },
+                        itemCount: _getFilteredResults().length,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+    );
+  }
+
+  /// Search Overlay show
+  void _showSearchOverlay() {
+    _searchOverlayEntry = _createSearchOverlay();
+    Overlay.of(context).insert(_searchOverlayEntry!);
+  }
+
+  /// Search Overlay hide
+  void _hideSearchOverlay() {
+    _searchOverlayEntry?.remove();
+    _searchOverlayEntry = null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _hideTextField();
+    _hideSearchOverlay();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,6 +167,7 @@ class _UserInputPageState extends State<UserInputPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Dropdown
             Text(
               'Select Development Framework',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
@@ -168,7 +176,7 @@ class _UserInputPageState extends State<UserInputPage> {
             CustomDropdown(
               items: items,
               value: selectedValue,
-              hint: 'Select Framework',
+              hintText: 'Select Framework',
               onChanged: (value) {
                 setState(() {
                   selectedValue = value;
@@ -192,13 +200,18 @@ class _UserInputPageState extends State<UserInputPage> {
                 ),
               ),
 
-            SizedBox(height: 20),
-            ElevatedButton(onPressed: _showTextField, child: Text('TextField')),
-
+            // 텍스트필드 오버레이
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _showOverlay,
-              child: Text('OnlyOverlayBuild'),
+              onPressed: _showTextField,
+              child: Text('TextField Overlay'),
+            ),
+
+            // 검색창 오버레이
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _showSearchOverlay,
+              child: Text('Search Overlay'),
             ),
           ],
         ),

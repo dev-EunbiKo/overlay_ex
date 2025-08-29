@@ -1,18 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
+/// 오버레이를 사용한 커스텀 드롭다운
 class CustomDropdown extends StatefulWidget {
   final List<String> items;
   final String? value;
   final ValueChanged<String>? onChanged;
-  final String hint;
+  final String hintText;
 
   const CustomDropdown({
     super.key,
     required this.items,
     this.value,
     this.onChanged,
-    this.hint = 'Select an Item',
+    this.hintText = 'Select an Item',
   });
 
   @override
@@ -118,6 +119,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               ),
             ),
       );
+
       Overlay.of(context).insert(_overlayEntry!);
       setState(() {
         _isOpen = true;
@@ -162,7 +164,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 children: [
                   Expanded(
                     child: Text(
-                      widget.value ?? widget.hint,
+                      widget.value ?? widget.hintText,
                       style: TextStyle(
                         color:
                             widget.value != null

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 enum ToastType { success, info, error, warning }
 
 // TODO: 오류 CHECK !! >>> 여러 개를 여러 번 보여주려면 List로 된 EntryQueue를 만들어서 해야 할 듯
+/// 오버레이를 사용한 토스트 메시지
 class ToastManager {
   static OverlayEntry? _currentToast;
 
@@ -15,7 +16,7 @@ class ToastManager {
     Duration duration = const Duration(seconds: 3),
     ToastType type = ToastType.info,
   }) {
-    // _currentToast?.remove();
+    _currentToast?.remove();
 
     _currentToast = OverlayEntry(
       builder:
@@ -29,10 +30,12 @@ class ToastManager {
             },
           ),
     );
+
     Overlay.of(context).insert(_currentToast!);
   }
 }
 
+/// 애니메이션 효과
 class _ToastWidget extends StatefulWidget {
   final String message;
   final ToastType type;
@@ -65,19 +68,6 @@ class _ToastWidgetState extends State<_ToastWidget>
   }
 
   @override
-  void deactivate() {
-    _timer?.cancel();
-    _animationController?.stop();
-    super.deactivate();
-  }
-
-  void _hideToast() async {
-    _animationController?.reverse();
-    _timer?.cancel();
-    widget.onDismiss();
-  }
-
-  @override
   void initState() {
     _animationController = AnimationController(
       vsync: this,
@@ -103,6 +93,12 @@ class _ToastWidgetState extends State<_ToastWidget>
     Timer(widget.duration, () {
       _hideToast();
     });
+  }
+
+  void _hideToast() async {
+    _animationController?.reverse();
+    _timer?.cancel();
+    widget.onDismiss();
   }
 
   Color _getBackgroundColor() {
