@@ -168,6 +168,7 @@ class _SimpleOverlayState extends State<SimpleOverlay> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // 기본 show
                 ElevatedButton(
